@@ -1,6 +1,4 @@
 
-package sad.practica1;
-
 public class Line {
 
 //right, left: caràcter dreta, caràcter esquerra amb les fletxes.
@@ -17,7 +15,7 @@ public class Line {
     public Line (){
         cursor = 0;
         end = 0;
-        str = null;
+        str = "";
         ins = true;
     }
     
@@ -30,11 +28,11 @@ public class Line {
     }
     
     public void right (){
-        
+        cursor++;
     }
     
     public void left (){
-        
+        if (cursor > 0) {cursor--;}
     }    
     
     public void del (){
@@ -43,6 +41,18 @@ public class Line {
     
     public void bksp (){
         
+    }
+
+    public void ins (){
+        ins = !ins;
+    }
+
+    public void home (){
+        cursor = home;
+    }
+
+    public void end (){
+        cursor = end;
     }
     
 }

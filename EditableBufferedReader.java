@@ -1,4 +1,3 @@
-package sad.practica1;
 
 import java.io.*;
 
@@ -32,21 +31,42 @@ public class EditableBufferedReader extends BufferedReader {
     @Override
     public int read() throws IOException{
         line = new Line();
+	int in;
         char ch;
         this.setRaw();
         
         
         while (true) {
-            ch = (char) super.read();
-            line.setStr(Character.toString(ch));
-            
-            if (ch == '\n') {return 0;}
+            in = super.read();
+	    switch (in) {
+	        case 13 :
+		    return 0;
+		case 279167 :
+		    line.right();
+		case 279168 :
+		    line.left();
+		case 279151126 :
+		    line.del();
+		case 127 :
+		    line.bksp();
+		case 279150126 :
+		    line.ins();
+		case 279170 :
+		    line.end();
+		case 279172 :
+		    line.home();
+	    }
+	    
+	    //ch = (char) in;
+            //line.setStr(Character.toString(ch));
+	    line.setStr(Integer.toString(in));
         }
     }
     
     @Override
     public String readLine()throws IOException{
         int i = read();
+	this.unsetRaw();
         return line.getLine();
     }
     

@@ -1,4 +1,3 @@
-package sad.practica1;
 
 import java.io.*;
 
