@@ -9,18 +9,35 @@ public class Line {
     static int home = 0;
     int cursor;
     int end;
-    String str;
+    char[] ch;
     boolean ins;
     
     public Line (){
         cursor = 0;
         end = 0;
-        str = "";
         ins = true;
     }
     
-    public void setStr (String ch){
-        str = str + ch;
+    public void keyPressed (int key){
+        switch (key) {
+            case 0: this.right();
+            case 1: this.left();
+            case 2: this.home();
+            case 3: this.end();
+            case 4: this.ins();
+            case 5: this.del();
+            case 127: this.bksp();
+            default: setStr((char) key);
+        }
+    }
+    
+    public void setStr (char c){
+        if (ins == true){
+            
+        }else{
+            ch[cursor] = c;
+        }
+        cursor++;
     }
     
     public String getLine (){
@@ -28,11 +45,16 @@ public class Line {
     }
     
     public void right (){
-        cursor++;
+        if (cursor < end) {
+        	cursor++;
+        }
     }
     
     public void left (){
-        if (cursor > 0) {cursor--;}
+        if (cursor > 0) {
+        	cursor--;
+        
+        }
     }    
     
     public void del (){
@@ -56,3 +78,4 @@ public class Line {
     }
     
 }
+
