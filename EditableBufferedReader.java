@@ -66,6 +66,7 @@ public class EditableBufferedReader extends BufferedReader {
                     	super.read();
                     	return Key.DEL.ordinal();
                 }
+                break;
             default:
                 return in;
         }
