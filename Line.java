@@ -20,91 +20,88 @@ public class Line {
         ch = new ArrayList<Character>();
     }
     
-    public void keyPressed (int key){
-        switch (key) {
-            case 0: this.right();
-                    break;
-            case 1: this.left();
-                    break;
-            case 2: this.home();
-                    break;
-            case 3: this.end();
-                    break;
-            case 4: this.ins();
-                    break;
-            case 5: this.del();
-                    break;
-            case 127: this.bksp();
-                      break;
-            default: setStr((char) key);
-        }
-        
-        this.shellRefresh();
-    }
-    
-    public void setStr (char c){
+    //Si ins == true --> return numero de caracteres por delante de cursor;
+    //Si ins == false --> return -1;
+    public int setStr (char c){
         if (ins == true){
-            ch.set(cursor,c);
-            if(cursor <= end){
+            if(cursor >= end){
                 end++;
+                ch.add(cursor,c);
+            }else{
+            	 ch.set(cursor,c);
             }
+            cursor++;
+            return -1;
         }else{
             ch.add(cursor,c);
             end++;
+            cursor++;
+            return (end-cursor);
         }
-        cursor++;
-        
-        //Runtime.getRuntime().exec("echo \""+Character.toString(c)+"\"").waitFor();
     }
     
     public String getLine (){
-        return Arrays.toString(ch.toArray());
+    	Character[] arr = new Character[ch.size()]; 
+        arr = ch.toArray(arr);
+        String str = "";
+	for (Character c : arr)
+            str += c.toString();
+        return str;
     }
     
-    public void right (){
+    public boolean right (){
         if (cursor < end) {
             cursor++;
-        }
+            return true;
+        }else{return false;}
     }
     
-    public void left (){
+    public boolean left (){
         if (cursor > 0) {
             cursor--;
-        
-        }
+            return true;
+        }else{return false;}
     }    
     
-    public void del (){
+    //Si no es posible hacer delete return -1
+    //Si es posible return numero de caracteres por delante de cursor
+    public int del (){
         if (cursor < end) {
             ch.remove(cursor);
             end--;
-        }
+            return (end-cursor);
+        }else{return -1;}
     }
 
-    public void bksp (){
+    //Si no es posible hacer delete return -1
+    //Si es posible return numero de caracteres por delante de cursor
+    public int bksp (){
         if (cursor > 0) {
             ch.remove(cursor-1);
             end--;
             cursor--;
-        }
+            return (end-cursor);
+        }else{return -1;}
     }
 
     public void ins (){
         ins = !ins;
     }
 
-    public void home (){
+    public int home (){
+        int aux = cursor;
         cursor = home;
+        return aux;
     }
 
-    public void end (){
+    public int end (){
+        int aux = cursor;
         cursor = end;
+        return (end-aux);
     }
     
-    public void shellRefresh(){
-    	/*Eliminamos el contenido en la terminal para actualizarlo
-        String[] cmd = {"/bin/sh", "-c", "stty -flusho </dev/tty"};
-        Runtime.getRuntime().exec(cmd).waitFor(); */
+    public Character getNextChar(int i){
+    	return ch.get(cursor+i);
     }
     
 }

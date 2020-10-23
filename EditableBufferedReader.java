@@ -66,7 +66,6 @@ public class EditableBufferedReader extends BufferedReader {
                     	super.read();
                     	return Key.DEL.ordinal();
                 }
-                break;
             default:
                 return in;
         }
@@ -79,8 +78,51 @@ public class EditableBufferedReader extends BufferedReader {
         Line line = new Line();
 
         int in;
+        int numPosH;
+        int numPosE;
+        int numPos;
         while ((in = this.read()) != 13) {
-            line.keyPressed(in);
+            
+            switch (in) {
+                case 0: if (line.right() == true) {System.out.print("\033[C");}
+                        break;
+                case 1: if (line.left() == true) {System.out.print("\033[D");}
+                        break;
+                case 2: numPosH = line.home();
+                	 System.out.print("\033["+numPosH+"D");
+                        break;
+                case 3: numPosE = line.end();
+                	 System.out.print("\033["+numPosE+"C");
+                        break;
+                case 4: line.ins();
+                        break;
+                case 5: if ((numPos = line.del()) != -1) {
+                            for (int i = 0; i < numPos; i++){
+                                System.out.print(line.getNextChar(i));
+                            }
+                            numPos++;
+                            System.out.print(" \033["+numPos+"D");
+                        }
+                        break;
+                case 127: if ((numPos = line.bksp()) != -1) {
+                	       System.out.print("\033[D");
+                              for (int i = 0; i < numPos; i++){
+                                  System.out.print(line.getNextChar(i));
+                              }
+                              numPos++;
+                              System.out.print(" \033["+numPos+"D");
+                          }
+                          break;
+                default: if ((numPos = line.setStr((char) in)) != -1) {
+                             System.out.print("\033[C");
+                	      for (int i = 0; i < numPos; i++){
+                	          System.out.print(line.getNextChar(i));
+                	      }
+                	      numPos++;
+                	      System.out.print("\033["+numPos+"D");
+                	      System.out.print((char) in);
+                	  }else {System.out.print((char) in);}
+            }
         }
 
         this.unsetRaw();
