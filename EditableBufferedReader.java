@@ -5,15 +5,13 @@ public class EditableBufferedReader extends BufferedReader {
 
     InputStreamReader in;
 
-    enum Key{
-        RIGHT,
-        LEFT,
-        HOME,
-        END,
-        INS,
-        DEL
-    }
-    
+    public static final int RIGHT = 0;
+    public static final int LEFT = 1;
+    public static final int HOME = 2;
+    public static final int END = 3;
+    public static final int INS = 4;
+    public static final int DEL = 5;
+
     public EditableBufferedReader(Reader reader) {
         super(reader);
     }
@@ -55,16 +53,20 @@ public class EditableBufferedReader extends BufferedReader {
             case '\033':
                 super.read();
                 switch (in = super.read()) {
-                    case 'C': return Key.RIGHT.ordinal();
-                    case 'D': return Key.LEFT.ordinal();
-                    case 'H': return Key.HOME.ordinal();
-                    case 'F': return Key.END.ordinal();
-                    case '2': 
-                    	super.read();
-                    	return Key.INS.ordinal();
-                    case '3': 
-                    	super.read();
-                    	return Key.DEL.ordinal();
+                    case 'C':
+                        return RIGHT;
+                    case 'D':
+                        return LEFT;
+                    case 'H':
+                        return HOME;
+                    case 'F':
+                        return END;
+                    case '2':
+                        super.read();
+                        return INS;
+                    case '3':
+                        super.read();
+                        return DEL;
                 }
             default:
                 return in;
@@ -80,48 +82,48 @@ public class EditableBufferedReader extends BufferedReader {
         int in;
         int numPosH;
         int numPosE;
-        int numPos;
         while ((in = this.read()) != 13) {
-            
+
             switch (in) {
-                case 0: if (line.right() == true) {System.out.print("\033[C");}
-                        break;
-                case 1: if (line.left() == true) {System.out.print("\033[D");}
-                        break;
-                case 2: numPosH = line.home();
-                	 System.out.print("\033["+numPosH+"D");
-                        break;
-                case 3: numPosE = line.end();
-                	 System.out.print("\033["+numPosE+"C");
-                        break;
-                case 4: line.ins();
-                        break;
-                case 5: if ((numPos = line.del()) != -1) {
-                            for (int i = 0; i < numPos; i++){
-                                System.out.print(line.getNextChar(i));
-                            }
-                            numPos++;
-                            System.out.print(" \033["+numPos+"D");
-                        }
-                        break;
-                case 127: if ((numPos = line.bksp()) != -1) {
-                	       System.out.print("\033[D");
-                              for (int i = 0; i < numPos; i++){
-                                  System.out.print(line.getNextChar(i));
-                              }
-                              numPos++;
-                              System.out.print(" \033["+numPos+"D");
-                          }
-                          break;
-                default: if ((numPos = line.setStr((char) in)) != -1) {
-                             System.out.print("\033[C");
-                	      for (int i = 0; i < numPos; i++){
-                	          System.out.print(line.getNextChar(i));
-                	      }
-                	      numPos++;
-                	      System.out.print("\033["+numPos+"D");
-                	      System.out.print((char) in);
-                	  }else {System.out.print((char) in);}
+                case RIGHT:
+                    if (line.right()) {
+                        System.out.print("\033[C");
+                    }
+                    break;
+                case LEFT:
+                    if (line.left()) {
+                        System.out.print("\033[D");
+                    }
+                    break;
+                case HOME:
+                    numPosH = line.home();
+                    System.out.print("\033[" + numPosH + "D");
+                    break;
+                case END:
+                    numPosE = line.end();
+                    System.out.print("\033[" + numPosE + "C");
+                    break;
+                case INS:
+                    line.ins();
+                    break;
+                case DEL:
+                    if (line.del()){
+                        System.out.print("\033[P");
+                    }
+                    break;
+                case 127:
+                    if (line.bksp()){
+                        System.out.print("\033[D");
+                        System.out.print("\033[P");
+                    }
+                    break;
+                default:
+                    if (line.setStr((char) in)){
+                        System.out.print((char) in);
+                    }else {
+                        System.out.print("\033[@");
+                        System.out.print((char) in);
+                    }
             }
         }
 
